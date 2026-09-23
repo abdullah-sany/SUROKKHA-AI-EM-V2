@@ -1,0 +1,39 @@
+{
+  "entities": {
+    "ambulances": {
+      "title": "Ambulances",
+      "description": "Directory of emergency ambulance service providers across Bangladesh",
+      "fields": {
+        "id": { "type": "string", "description": "Unique identifier" },
+        "providerName": { "type": "string", "description": "Name of the ambulance service" },
+        "division": { "type": "string", "description": "Administrative division" },
+        "district": { "type": "string", "description": "District name" },
+        "area": { "type": "string", "description": "Specific area or station" },
+        "phone": { "type": "string", "description": "Emergency contact number" },
+        "serviceType": { "type": "string", "description": "Type of service: Basic, AC, ICU, etc." },
+        "latitude": { "type": "number", "description": "GPS Latitude" },
+        "longitude": { "type": "number", "description": "GPS Longitude" },
+        "verified": { "type": "boolean", "description": "Verification status" },
+        "source": { "type": "string", "description": "Source of record" },
+        "lastVerifiedAt": { "type": "string", "description": "ISO timestamp of verification" }
+      }
+    },
+    "facilities": {
+      "title": "Healthcare Facilities",
+      "description": "Directory of hospitals, clinics, and health centers in Bangladesh",
+      "fields": {
+        "id": { "type": "string", "description": "Unique identifier" },
+        "name": { "type": "string", "description": "Facility name" },
+        "division": { "type": "string", "description": "Administrative division" },
+        "district": { "type": "string", "description": "District name" },
+        "upazila": { "type": "string", "description": "Upazila or sub-district" },
+        "facilityType": { "type": "string", "description": "Hospital, Upazila Health Complex, etc." },
+        "phone": { "type": "string", "description": "Contact telephone" },
+        "latitude": { "type": "number", "description": "GPS Latitude" },
+        "longitude": { "type": "number", "description": "GPS Longitude" },
+        "verified": { "type": "boolean", "description": "Verification status" },
+        "totalBeds": { "type": "number", "description": "Approved or available bed count" }
+      }
+    }
+  }
+}

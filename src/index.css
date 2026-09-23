@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+@theme {
+  --color-medical-navy: #0a192f;
+  --color-medical-red: #dc2626;
+  --color-medical-teal: #0891b2;
+  --color-medical-blue: #2563eb;
+  --color-verified-green: #10b981;
+  --color-warning-amber: #f59e0b;
+  --color-muted-gray: #64748b;
+  --color-off-white: #fbfbfa;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-off-white);
+    color: var(--color-medical-navy);
+    font-family: 'Hind Siliguri', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+}
+
+html[lang="bn"], .font-bangla {
+  font-family: 'Hind Siliguri', system-ui, sans-serif;
+}
+
+/* Leaflet pulsing user marker */
+.user-pulse-marker {
+  position: relative;
+  width: 22px;
+  height: 22px;
+}
+.user-pulse-marker .core-dot {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 12px;
+  height: 12px;
+  background-color: #2563eb;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.8);
+  z-index: 2;
+}
+.user-pulse-marker .pulse-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 22px;
+  height: 22px;
+  background-color: rgba(37, 99, 235, 0.4);
+  border-radius: 50%;
+  animation: marker-pulse 2s infinite ease-out;
+  z-index: 1;
+}
+
+@keyframes marker-pulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+/* Custom Leaflet Map Pin */
+.facility-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  border: 2px solid #ffffff;
+  transition: transform 0.2s ease;
+}
+.facility-pin:hover {
+  transform: scale(1.15);
+}
+.facility-pin.hospital {
+  background-color: #dc2626;
+}
+.facility-pin.pharmacy {
+  background-color: #059669;
+}
+.facility-pin.clinic {
+  background-color: #0284c7;
+}
+.facility-pin.diagnostic {
+  background-color: #7c3aed;
+}
+.facility-pin.ambulance {
+  background-color: #ea580c;
+}
+.facility-pin.icu {
+  background-color: #b91c1c;
+  box-shadow: 0 0 10px rgba(185, 28, 28, 0.7);
+}
+
+/* Hero Heading Entrance Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
