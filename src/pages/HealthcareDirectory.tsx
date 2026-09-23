@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getFacilitiesFromFirestore } from '../lib/firebase';
 import { getDistrictsForDivision } from '../data/bangladeshDistricts';
+import bundledHospitals from '../data/hospitals.json';
 
 export default function HealthcareDirectory() {
   const { language, t } = useLanguage();
@@ -47,39 +48,50 @@ export default function HealthcareDirectory() {
       let data: HealthcareFacility[] = [];
 
       // 1. Check Cloud Firestore
-      const firestoreFacilities = await getFacilitiesFromFirestore();
-      if (firestoreFacilities && firestoreFacilities.length > 0) {
-        data = firestoreFacilities;
-        if (searchQuery) {
-          const s = searchQuery.toLowerCase();
-          data = data.filter(f => f.name.toLowerCase().includes(s) || (f.nameBn && f.nameBn.includes(s)) || (f.area && f.area.toLowerCase().includes(s)));
+      try {
+        const firestoreFacilities = await getFacilitiesFromFirestore();
+        if (firestoreFacilities && firestoreFacilities.length > 0) {
+          data = firestoreFacilities;
         }
-        if (division) data = data.filter(f => f.division?.toLowerCase() === division.toLowerCase());
-        if (district) {
-          const dSearch = district.toLowerCase();
-          data = data.filter(f => {
-            const facilityDistrict = f.district?.toLowerCase() || '';
-            // Handle variations like Cox's Bazar / Coxs Bazar
-            return facilityDistrict === dSearch || facilityDistrict.replace(/'/g, '') === dSearch.replace(/'/g, '');
-          });
+      } catch (fErr) {
+        console.warn('Firestore fetch failed:', fErr);
+      }
+
+      // 2. Fallback to Local API
+      if (data.length === 0) {
+        try {
+          const url = new URL('/api/healthcare', window.location.origin);
+          const res = await fetch(url.toString());
+          if (res.ok) {
+            data = await res.json();
+          }
+        } catch (apiErr) {
+          console.warn('Server API fetch failed:', apiErr);
         }
-        if (facilityType) data = data.filter(f => f.facilityType === facilityType);
-        if (verifiedFilter !== '') {
-          const isV = verifiedFilter === 'true';
-          data = data.filter(f => f.verified === isV);
-        }
-      } else {
-        // 2. Fallback to Local API
-        const url = new URL('/api/healthcare', window.location.origin);
-        if (searchQuery) url.searchParams.append('search', searchQuery);
-        if (division) url.searchParams.append('division', division);
-        if (district) url.searchParams.append('district', district);
-        if (facilityType) url.searchParams.append('facilityType', facilityType);
-        if (verifiedFilter !== '') url.searchParams.append('verified', verifiedFilter);
-        
-        const res = await fetch(url.toString());
-        if (!res.ok) throw new Error('Failed to fetch healthcare data');
-        data = await res.json();
+      }
+
+      // 3. Guaranteed Local Offline Fallback if offline
+      if (data.length === 0 && bundledHospitals && (bundledHospitals as any[]).length > 0) {
+        data = bundledHospitals as HealthcareFacility[];
+      }
+
+      // Apply client-side filters
+      if (searchQuery) {
+        const s = searchQuery.toLowerCase();
+        data = data.filter(f => f.name.toLowerCase().includes(s) || (f.nameBn && f.nameBn.includes(s)) || (f.area && f.area.toLowerCase().includes(s)));
+      }
+      if (division) data = data.filter(f => f.division?.toLowerCase() === division.toLowerCase());
+      if (district) {
+        const dSearch = district.toLowerCase();
+        data = data.filter(f => {
+          const facilityDistrict = f.district?.toLowerCase() || '';
+          return facilityDistrict === dSearch || facilityDistrict.replace(/'/g, '') === dSearch.replace(/'/g, '');
+        });
+      }
+      if (facilityType) data = data.filter(f => f.facilityType === facilityType);
+      if (verifiedFilter !== '') {
+        const isV = verifiedFilter === 'true';
+        data = data.filter(f => f.verified === isV);
       }
 
       // If location is granted, calculate distance and sort

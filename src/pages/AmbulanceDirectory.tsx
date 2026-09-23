@@ -4,6 +4,7 @@ import { Ambulance } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getAmbulancesFromFirestore } from '../lib/firebase';
 import { BANGLADESH_DISTRICTS, getDistrictsForDivision } from '../data/bangladeshDistricts';
+import bundledAmbulances from '../data/ambulances.json';
 
 export default function AmbulanceDirectory() {
   const { language, t } = useLanguage();
@@ -52,15 +53,31 @@ export default function AmbulanceDirectory() {
       let results: Ambulance[] = [];
 
       // 1. Attempt reading from Cloud Firestore first
-      const firestoreData = await getAmbulancesFromFirestore();
-      if (firestoreData && firestoreData.length > 0) {
-        results = firestoreData;
-      } else {
-        // 2. Fallback to Server API
-        const url = new URL('/api/ambulances', window.location.origin);
-        const res = await fetch(url.toString());
-        if (!res.ok) throw new Error('Failed to fetch ambulance data');
-        results = await res.json();
+      try {
+        const firestoreData = await getAmbulancesFromFirestore();
+        if (firestoreData && firestoreData.length > 0) {
+          results = firestoreData;
+        }
+      } catch (fErr) {
+        console.warn('Firestore ambulance fetch failed:', fErr);
+      }
+
+      // 2. Fallback to Server API if not fetched from Firestore
+      if (results.length === 0) {
+        try {
+          const url = new URL('/api/ambulances', window.location.origin);
+          const res = await fetch(url.toString());
+          if (res.ok) {
+            results = await res.json();
+          }
+        } catch (apiErr) {
+          console.warn('Server API ambulance fetch failed:', apiErr);
+        }
+      }
+
+      // 3. Guaranteed Local Offline Fallback if completely offline
+      if (results.length === 0 && bundledAmbulances && (bundledAmbulances as any[]).length > 0) {
+        results = bundledAmbulances as Ambulance[];
       }
 
       // Apply Client-Side Filter for precision & instant responsiveness

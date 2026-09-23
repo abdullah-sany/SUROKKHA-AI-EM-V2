@@ -14,6 +14,8 @@ import { fetchRoadRoute, OsrmRouteResult } from '../services/routingService';
 import { MapContainer, Marker, Popup, Polyline, Circle, useMap } from 'react-leaflet';
 import { CachedTileLayer } from '../components/CachedTileLayer';
 import { getCachedTileCount, clearMapTileCache } from '../utils/mapTileCache';
+import bundledHospitals from '../data/hospitals.json';
+import bundledAmbulances from '../data/ambulances.json';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -175,11 +177,15 @@ export default function NearbyFacilities() {
       let localData: HealthcareFacility[] = [];
       if (localRes.status === 'fulfilled' && localRes.value.ok) {
         localData = await localRes.value.json();
+      } else if (bundledHospitals && (bundledHospitals as any[]).length > 0) {
+        localData = bundledHospitals as HealthcareFacility[];
       }
 
       let ambData: Ambulance[] = [];
       if (ambRes.status === 'fulfilled' && ambRes.value.ok) {
         ambData = await ambRes.value.json();
+      } else if (bundledAmbulances && (bundledAmbulances as any[]).length > 0) {
+        ambData = bundledAmbulances as Ambulance[];
       }
 
       // Calculate distances for local facilities
