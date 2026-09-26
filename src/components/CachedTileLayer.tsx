@@ -32,34 +32,38 @@ const OfflineCachedTileLayerClass = L.TileLayer.extend({
     getCachedTileBlobUrl(tileKey).then((cachedBlobUrl) => {
       if (cachedBlobUrl) {
         tile.src = cachedBlobUrl;
-        done(undefined, tile);
         return;
       }
 
-      // 2. If not in cache, fetch and store
-      fetch(originalUrl, { mode: 'cors' })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`Tile fetch error: ${response.status}`);
-          }
-          return response.blob();
-        })
-        .then((blob) => {
-          // Save blob into IndexedDB
-          saveTileBlob(tileKey, blob);
-          if ((this as any).options.onTileCached) {
-            (this as any).options.onTileCached();
-          }
+      // 2. If not in cache and browser is online, fetch and store
+      if (navigator.onLine) {
+        fetch(originalUrl, { mode: 'cors' })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Tile fetch error: ${response.status}`);
+            }
+            return response.blob();
+          })
+          .then((blob) => {
+            // Save blob into IndexedDB
+            saveTileBlob(tileKey, blob);
+            if ((this as any).options.onTileCached) {
+              (this as any).options.onTileCached();
+            }
 
-          // Use blob url for display
-          const blobUrl = URL.createObjectURL(blob);
-          tile.src = blobUrl;
-          done(undefined, tile);
-        })
-        .catch(() => {
-          // Fallback directly to image element src (handles offline failure or CORS restrictions)
-          tile.src = originalUrl;
-        });
+            // Use blob url for display
+            const blobUrl = URL.createObjectURL(blob);
+            tile.src = blobUrl;
+          })
+          .catch(() => {
+            // If CORS or network fetch error, fallback to direct src
+            tile.src = originalUrl;
+          });
+      } else {
+        // If offline and not in IndexedDB, generate an emergency grid SVG tile
+        const fallbackSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><rect width="256" height="256" fill="%23f1f5f9"/><path d="M0 0h256v256H0z" fill="none" stroke="%23cbd5e1" stroke-width="1"/><text x="128" y="128" font-family="sans-serif" font-size="10" fill="%2394a3b8" text-anchor="middle" dominant-baseline="middle">OFFLINE MAP GRID</text></svg>`;
+        tile.src = fallbackSvg;
+      }
     }).catch(() => {
       tile.src = originalUrl;
     });
