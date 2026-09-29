@@ -12,12 +12,16 @@ const translations: Record<Language, Record<string, string>> = {
   en: {
     // AppHeader
     'nav.home': 'HOME',
-    'nav.emergency': 'EMERGENCY',
+    'nav.emergency': 'EMERGENCY HUB',
     'nav.healthcare': 'HEALTHCARE',
     'nav.ambulance': 'AMBULANCE',
-    'nav.contacts': 'CONTACTS',
+    'nav.contacts': 'HOTLINES',
     'nav.need_blood': 'NEED BLOOD ↗',
     'nav.nearby': 'NEARBY',
+    'nav.shelters': 'SHELTERS',
+    'nav.volunteers': 'VOLUNTEERS & RESCUE',
+    'nav.first_aid': 'FIRST AID',
+    'nav.disaster': 'DISASTER & RELIEF',
     'nav.developer': 'DEVELOPER',
 
     // HomePage
@@ -135,7 +139,6 @@ const translations: Record<Language, Record<string, string>> = {
     'nearby.cache_cleared': 'Tile cache cleared',
 
     // First Aid Guide
-    'nav.first_aid': 'FIRST AID',
     'firstaid.title': 'First Aid Guide',
     'firstaid.desc': 'Step-by-step instructions for common emergencies. Note: This is not a substitute for professional medical advice.',
     'firstaid.warning': 'Disclaimer: This guide is for educational purposes only. Always seek professional medical help in an emergency.',
@@ -198,7 +201,6 @@ const translations: Record<Language, Record<string, string>> = {
     'type.pharmacy': 'Pharmacy',
 
     // Shelters Finder
-    'nav.shelters': 'SHELTERS',
     'shelter.badge': 'Cyclone & Flood Shelter Locator',
     'shelter.title': 'Cyclone & Flood Shelter Finder',
     'shelter.subtitle': 'Locate nearest elevated cyclone shelters, flood refuges and Mujib Killas across Bangladesh with full offline support.',
@@ -238,7 +240,6 @@ const translations: Record<Language, Record<string, string>> = {
     'shelter.checklist_check_all': 'Check All',
 
     // Volunteer & Rescue Squads
-    'nav.volunteers': 'VOLUNTEERS',
     'volunteers.badge': 'Community Volunteer & Rescue Squads',
     'volunteers.title': 'Volunteer & Rescue Squad Directory',
     'volunteers.subtitle': 'Verified local volunteer teams, Red Crescent, Fire Service community squads, Gausia Committee, and youth rescue teams with 24/7 hotlines.',
@@ -249,14 +250,16 @@ const translations: Record<Language, Record<string, string>> = {
   bn: {
     // AppHeader
     'nav.home': 'হোম',
-    'nav.emergency': 'জরুরি',
+    'nav.emergency': 'জরুরি হাব',
     'nav.healthcare': 'স্বাস্থ্যসেবা',
     'nav.ambulance': 'অ্যাম্বুলেন্স',
-    'nav.contacts': 'যোগাযোগ',
+    'nav.contacts': 'জরুরি নম্বর',
     'nav.need_blood': 'রক্ত প্রয়োজন ↗',
     'nav.nearby': 'আশেপাশে',
     'nav.shelters': 'আশ্রয়কেন্দ্র',
     'nav.volunteers': 'উদ্ধারকারী দল',
+    'nav.first_aid': 'প্রাথমিক চিকিৎসা',
+    'nav.disaster': 'দুর্যোগ ও ত্রাণ',
     'nav.developer': 'ডেভেলপার',
 
     // HomePage
@@ -374,7 +377,6 @@ const translations: Record<Language, Record<string, string>> = {
     'nearby.cache_cleared': 'ম্যাপ টাইল ক্যাশ খালি করা হয়েছে',
 
     // First Aid Guide
-    'nav.first_aid': 'ফার্স্ট এইড',
     'firstaid.title': 'ফার্স্ট এইড গাইড',
     'firstaid.desc': 'সাধারণ জরুরি অবস্থার জন্য ধাপে ধাপে নির্দেশাবলী। দ্রষ্টব্য: এটি পেশাদার চিকিৎসকের পরামর্শের বিকল্প নয়।',
     'firstaid.warning': 'সতর্কতা: এই নির্দেশিকা শুধুমাত্র শিক্ষামূলক উদ্দেশ্যে। জরুরি অবস্থায় সর্বদা পেশাদার চিকিৎসকের সাহায্য নিন।',

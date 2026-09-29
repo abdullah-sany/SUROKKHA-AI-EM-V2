@@ -1,4 +1,8 @@
+// Ensure HMR is disabled in AI Studio dev environment to prevent WebSocket errors
+process.env.DISABLE_HMR = "true";
+
 import express from "express";
+import http from "http";
 import cors from "cors";
 import path from "path";
 import fs from "fs";
@@ -7,7 +11,7 @@ import { createServer as createViteServer } from "vite";
 const rootDir = process.cwd();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.NODE_ENV === "production" ? (process.env.PORT || 8080) : 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -119,9 +123,16 @@ app.get("/api/emergency-contacts", (req, res) => {
 
 // --- Vite Middleware & Fallback ---
 async function startServer() {
-  if (process.env.NODE_ENV !== "production") {
+  const isProd = process.env.NODE_ENV === "production";
+  const httpServer = http.createServer(app);
+
+  if (!isProd) {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        ws: false,
+        hmr: false,
+      },
       appType: "spa",
     });
     app.use(vite.middlewares);
@@ -133,7 +144,7 @@ async function startServer() {
     });
   }
 
-  app.listen(Number(PORT), "0.0.0.0", () => {
+  httpServer.listen(Number(PORT), "0.0.0.0", () => {
     console.log(`Server running on http://0.0.0.0:${PORT}`);
   });
 }
