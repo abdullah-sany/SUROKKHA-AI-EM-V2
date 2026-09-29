@@ -34,6 +34,30 @@
         "verified": { "type": "boolean", "description": "Verification status" },
         "totalBeds": { "type": "number", "description": "Approved or available bed count" }
       }
+    },
+    "volunteers": {
+      "title": "Volunteer and Rescue Squads",
+      "description": "Directory of emergency rescue teams, Red Crescent, Fire Service volunteers, Gausia Committee and youth rescue units",
+      "fields": {
+        "id": { "type": "string", "description": "Unique identifier" },
+        "teamName": { "type": "string", "description": "Name of the rescue team" },
+        "organization": { "type": "string", "description": "Affiliated organization (BDRCS, FSCD, Gausia, Scouts, Local Youth, etc.)" },
+        "division": { "type": "string", "description": "Administrative division" },
+        "district": { "type": "string", "description": "District name" },
+        "upazila": { "type": "string", "description": "Upazila or sub-district" },
+        "coverageArea": { "type": "string", "description": "Specific coverage areas" },
+        "primaryPhone": { "type": "string", "description": "Primary emergency hotline" },
+        "secondaryPhone": { "type": "string", "description": "Secondary contact number" },
+        "whatsappNumber": { "type": "string", "description": "WhatsApp number for SOS and rescue coordinates" },
+        "leaderOrCoordinator": { "type": "string", "description": "Coordinator or team leader name" },
+        "activeVolunteersCount": { "type": "number", "description": "Number of active volunteers" },
+        "capabilities": { "type": "array", "description": "List of specialized capabilities (speedboat, divers, first aid, etc.)" },
+        "equipment": { "type": "string", "description": "Available rescue gear" },
+        "latitude": { "type": "number", "description": "Base latitude" },
+        "longitude": { "type": "number", "description": "Base longitude" },
+        "verified": { "type": "boolean", "description": "Verification status" },
+        "status": { "type": "string", "description": "Current status (active, standby, deployed)" }
+      }
     }
   }
 }

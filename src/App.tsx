@@ -13,6 +13,8 @@ import AmbulanceDirectory from './pages/AmbulanceDirectory';
 import EmergencyContacts from './pages/EmergencyContacts';
 import NearbyFacilities from './pages/NearbyFacilities';
 import FirstAidGuide from './pages/FirstAidGuide';
+import CycloneFloodShelterLocator from './pages/CycloneFloodShelterLocator';
+import VolunteerDirectory from './pages/VolunteerDirectory';
 import AdminDashboard from './pages/AdminDashboard';
 import MeetDeveloper from './pages/MeetDeveloper';
 import { LanguageProvider } from './contexts/LanguageContext';
@@ -30,6 +32,9 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/emergency" element={<EmergencyHub />} />
+                <Route path="/shelters" element={<CycloneFloodShelterLocator />} />
+                <Route path="/volunteers" element={<VolunteerDirectory />} />
+                <Route path="/rescue-squads" element={<VolunteerDirectory />} />
                 <Route path="/healthcare" element={<HealthcareDirectory />} />
                 <Route path="/ambulance" element={<AmbulanceDirectory />} />
                 <Route path="/emergency-contacts" element={<EmergencyContacts />} />

@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldAlert, Building2, Phone, MapPin, Activity } from 'lucide-react';
+import { ShieldAlert, Building2, Phone, MapPin, Activity, Waves, Users } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { NetworkStatusIndicator } from '../components/NetworkStatusIndicator';
 import { PWAInstallButton } from '../components/PWAInstallButton';
 
 export default function EmergencyHub() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isBn = language === 'bn';
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -30,20 +31,34 @@ export default function EmergencyHub() {
           {t('emergency.desc')}
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
           <Link 
             to="/healthcare"
-            className="flex-1 bg-white text-[var(--color-medical-red)] hover:bg-gray-50 px-8 py-5 rounded-xl font-extrabold tracking-wide text-lg text-center transition-colors shadow-md flex items-center justify-center space-x-3"
+            className="bg-white text-[var(--color-medical-red)] hover:bg-gray-50 px-6 py-4 rounded-xl font-extrabold tracking-wide text-base text-center transition-colors shadow-md flex items-center justify-center space-x-2"
           >
-            <Building2 className="w-6 h-6" />
+            <Building2 className="w-5 h-5" />
             <span>{t('emergency.btn.hospital')}</span>
           </Link>
           <Link 
             to="/ambulance"
-            className="flex-1 bg-red-900 text-white hover:bg-red-950 px-8 py-5 rounded-xl font-extrabold tracking-wide text-lg text-center transition-colors shadow-md flex items-center justify-center space-x-3"
+            className="bg-red-900 text-white hover:bg-red-950 px-6 py-4 rounded-xl font-extrabold tracking-wide text-base text-center transition-colors shadow-md flex items-center justify-center space-x-2"
           >
-            <Activity className="w-6 h-6" />
+            <Activity className="w-5 h-5" />
             <span>{t('emergency.btn.ambulance')}</span>
+          </Link>
+          <Link 
+            to="/shelters"
+            className="bg-teal-800 text-white hover:bg-teal-900 px-6 py-4 rounded-xl font-extrabold tracking-wide text-base text-center transition-colors shadow-md flex items-center justify-center space-x-2"
+          >
+            <Waves className="w-5 h-5 text-teal-300" />
+            <span>{isBn ? 'আশ্রয়কেন্দ্র' : 'SHELTERS'}</span>
+          </Link>
+          <Link 
+            to="/volunteers"
+            className="bg-rose-950 text-white hover:bg-black px-6 py-4 rounded-xl font-extrabold tracking-wide text-base text-center transition-colors shadow-md flex items-center justify-center space-x-2 border border-rose-400/40"
+          >
+            <Users className="w-5 h-5 text-yellow-300" />
+            <span>{isBn ? 'উদ্ধারকারী দল' : 'RESCUE SQUAD'}</span>
           </Link>
         </div>
       </div>
@@ -53,6 +68,44 @@ export default function EmergencyHub() {
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Volunteer Rescue Squad Card */}
+        <Link to="/volunteers" className="flex items-start p-6 md:p-8 bg-gradient-to-r from-rose-50/80 via-red-50/60 to-amber-50/40 border border-rose-200/90 rounded-2xl shadow-sm hover:shadow-md transition-shadow group">
+          <div className="bg-rose-700 text-white p-4 rounded-xl mr-6 group-hover:scale-110 transition-transform shrink-0 shadow-md">
+            <Users className="w-8 h-8 text-yellow-300" />
+          </div>
+          <div>
+            <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-rose-200/80 text-rose-900 text-xs font-bold mb-2">
+              <span>{isBn ? 'জরুরি উদ্ধার ও লাইফগার্ড' : 'Rescue Squads'}</span>
+              <span>•</span>
+              <span>{isBn ? 'স্পিডবোট ও ডুবুরি' : '24/7 Hotline'}</span>
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-1">
+              {isBn ? 'স্বেচ্ছাসেবক ও উদ্ধারকারী টিম ডিরেক্টরি' : 'Volunteer & Rescue Squad Directory'}
+            </h3>
+            <p className="text-slate-600 leading-relaxed text-sm">
+              {isBn 
+                ? 'রেড ক্রিসেন্ট, গাউসিয়া কমিটি, ফায়ার সার্ভিস ভলান্টিয়ার্স ও স্থানীয় তরুণ বোট স্কোয়াডের হটলাইন নম্বর ও সরাসরি উদ্ধার সহায়তা আবেদন।' 
+                : 'BDRCS, Fire Service community squads, Gausia Committee, and youth rescue teams.'}
+            </p>
+          </div>
+        </Link>
+
+        {/* Shelters Card */}
+        <Link to="/shelters" className="flex items-start p-6 md:p-8 bg-gradient-to-r from-teal-50/70 to-blue-50/50 border border-teal-200/80 rounded-2xl shadow-sm hover:shadow-md transition-shadow group">
+          <div className="bg-teal-600 text-white p-4 rounded-xl mr-6 group-hover:scale-110 transition-transform shrink-0">
+            <Waves className="w-8 h-8" />
+          </div>
+          <div>
+            <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-teal-200/60 text-teal-900 text-xs font-bold mb-2">
+              <span>{isBn ? 'উপকূলীয় ও বন্যা সংকট' : 'Disaster Relief'}</span>
+              <span>•</span>
+              <span>{isBn ? 'অফলাইন ম্যাপ প্রস্তুত' : 'Offline Ready'}</span>
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-1">{t('shelter.title')}</h3>
+            <p className="text-slate-600 leading-relaxed text-sm">{t('shelter.subtitle')}</p>
+          </div>
+        </Link>
+
         <Link to="/healthcare" className="flex items-start p-6 md:p-8 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow group">
           <div className="bg-blue-50 p-4 rounded-xl mr-6 group-hover:scale-110 transition-transform">
             <Building2 className="w-8 h-8 text-[var(--color-medical-blue)]" />

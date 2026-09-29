@@ -22,6 +22,8 @@ export function AppHeader() {
   const navLinks = [
     { name: t('nav.home'), path: '/' },
     { name: t('nav.emergency'), path: '/emergency' },
+    { name: t('nav.shelters'), path: '/shelters' },
+    { name: t('nav.volunteers'), path: '/volunteers' },
     { name: t('nav.healthcare'), path: '/healthcare' },
     { name: t('nav.nearby'), path: '/nearby' },
     { name: t('nav.ambulance'), path: '/ambulance' },
