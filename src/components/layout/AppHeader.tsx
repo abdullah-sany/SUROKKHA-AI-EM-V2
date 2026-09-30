@@ -134,18 +134,13 @@ export function AppHeader() {
           
           {/* Logo & Offline Status Badge */}
           <div className="flex items-center space-x-3 flex-shrink-0">
-            <Link to="/" className="flex items-center space-x-2 group">
-              <div className="w-9 h-9 rounded-lg bg-[var(--color-medical-navy)] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
+            <Link to="/" className="flex items-center space-x-2.5 group">
+              <div className="w-8 h-8 rounded-lg bg-[var(--color-medical-navy)] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
                 <ShieldCheck className="w-5 h-5 text-teal-400" />
               </div>
-              <div className="flex flex-col">
-                <span className="text-lg md:text-xl font-black tracking-tight text-[var(--color-medical-navy)] leading-tight">
-                  SUROKKHA AI <span className="text-[var(--color-medical-red)]">BD</span>
-                </span>
-                <span className="text-[10px] text-gray-500 font-semibold tracking-wider uppercase -mt-0.5">
-                  Emergency & Health Net
-                </span>
-              </div>
+              <span className="text-lg md:text-xl font-black tracking-tight text-[var(--color-medical-navy)]">
+                SUROKKHA AI <span className="text-[var(--color-medical-red)]">BD</span>
+              </span>
             </Link>
             <div className="hidden xl:block pl-2 border-l border-gray-200">
               <OfflineStatusBadge />
@@ -326,21 +321,7 @@ export function AppHeader() {
               </AnimatePresence>
             </div>
 
-            {/* 5. Emergency Contacts / Hotlines */}
-            <Link
-              to="/emergency-contacts"
-              className={cn(
-                "inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg text-sm font-semibold tracking-wide transition-colors",
-                location.pathname === '/emergency-contacts'
-                  ? "text-[var(--color-medical-red)] bg-red-50/60 font-bold"
-                  : "text-[var(--color-medical-navy)] hover:text-[var(--color-medical-teal)] hover:bg-gray-50"
-              )}
-            >
-              <PhoneCall className="w-3.5 h-3.5 text-rose-500" />
-              <span>{t('nav.contacts')}</span>
-            </Link>
-
-            {/* 6. Meet Developer */}
+            {/* 5. Meet Developer */}
             <Link
               to="/meet-developer"
               className={cn(

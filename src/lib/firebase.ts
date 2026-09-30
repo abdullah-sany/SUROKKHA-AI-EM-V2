@@ -24,7 +24,7 @@ import {
   onSnapshot
 } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
-import { Ambulance, HealthcareFacility } from '../types';
+import { Ambulance, HealthcareFacility, Shelter, VolunteerSquad } from '../types';
 
 // Initialize Firebase App safely
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
@@ -50,6 +50,8 @@ export type { User };
 // Firestore collection references
 export const ambulancesCollection = collection(db, 'ambulances');
 export const facilitiesCollection = collection(db, 'facilities');
+export const sheltersCollection = collection(db, 'shelters');
+export const volunteersCollection = collection(db, 'volunteers');
 
 /**
  * Fetch all ambulances from Firestore.
@@ -162,14 +164,121 @@ export async function seedAmbulancesToFirestore(ambulances: Ambulance[]): Promis
 /**
  * Batch Seed facilities into Firestore
  */
-export async function seedFacilitiesToFirestore(facilities: HealthcareFacility[]): Promise<number> {
+export async function seedFacilitiesToFirestore(facilities: HealthcareFacility[], onProgress?: (current: number, total: number) => void): Promise<number> {
   let count = 0;
-  // Seed first 50 or full list
-  const subset = facilities.slice(0, 100);
-  for (const fac of subset) {
-    const docRef = doc(db, 'facilities', fac.id);
-    await setDoc(docRef, fac, { merge: true });
+  for (const fac of facilities) {
+    const docId = fac.id || `hf-${Date.now()}-${count}`;
+    const docRef = doc(db, 'facilities', docId);
+    await setDoc(docRef, { ...fac, id: docId }, { merge: true });
     count++;
+    if (onProgress && count % 25 === 0) {
+      onProgress(count, facilities.length);
+    }
+  }
+  return count;
+}
+
+/**
+ * Fetch all shelters from Firestore.
+ */
+export async function getSheltersFromFirestore(): Promise<Shelter[] | null> {
+  try {
+    const q = query(sheltersCollection);
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
+      return null;
+    }
+    const list: Shelter[] = [];
+    querySnapshot.forEach((d) => {
+      list.push({ id: d.id, ...d.data() } as Shelter);
+    });
+    return list;
+  } catch (error) {
+    console.warn('Firestore shelters fetch failed:', error);
+    return null;
+  }
+}
+
+/**
+ * Admin operations: Add or update Shelter
+ */
+export async function saveShelterToFirestore(shelter: Partial<Shelter> & { id?: string }) {
+  if (shelter.id) {
+    const docRef = doc(db, 'shelters', shelter.id);
+    await setDoc(docRef, shelter, { merge: true });
+    return shelter.id;
+  } else {
+    const docRef = await addDoc(sheltersCollection, {
+      ...shelter,
+      lastVerifiedAt: new Date().toISOString()
+    });
+    return docRef.id;
+  }
+}
+
+/**
+ * Admin operations: Delete Shelter
+ */
+export async function deleteShelterFromFirestore(id: string) {
+  const docRef = doc(db, 'shelters', id);
+  await deleteDoc(docRef);
+}
+
+/**
+ * Batch Seed shelters into Firestore
+ */
+export async function seedSheltersToFirestore(shelters: Shelter[], onProgress?: (current: number, total: number) => void): Promise<number> {
+  let count = 0;
+  for (const s of shelters) {
+    const docId = s.id || `sh-${Date.now()}-${count}`;
+    const docRef = doc(db, 'shelters', docId);
+    await setDoc(docRef, { ...s, id: docId }, { merge: true });
+    count++;
+    if (onProgress && count % 10 === 0) {
+      onProgress(count, shelters.length);
+    }
+  }
+  return count;
+}
+
+/**
+ * Admin operations: Add or update Volunteer Squad
+ */
+export async function saveVolunteerToFirestore(volunteer: Partial<VolunteerSquad> & { id?: string }) {
+  if (volunteer.id) {
+    const docRef = doc(db, 'volunteers', volunteer.id);
+    await setDoc(docRef, volunteer, { merge: true });
+    return volunteer.id;
+  } else {
+    const docRef = await addDoc(volunteersCollection, {
+      ...volunteer,
+      lastVerifiedAt: new Date().toISOString()
+    });
+    return docRef.id;
+  }
+}
+
+/**
+ * Admin operations: Delete Volunteer Squad
+ */
+export async function deleteVolunteerFromFirestore(id: string) {
+  const docRef = doc(db, 'volunteers', id);
+  await deleteDoc(docRef);
+}
+
+/**
+ * Batch Seed volunteers into Firestore
+ */
+export async function seedVolunteersToFirestore(volunteers: VolunteerSquad[], onProgress?: (current: number, total: number) => void): Promise<number> {
+  let count = 0;
+  for (const v of volunteers) {
+    const docId = v.id || `vol-${Date.now()}-${count}`;
+    const docRef = doc(db, 'volunteers', docId);
+    await setDoc(docRef, { ...v, id: docId }, { merge: true });
+    count++;
+    if (onProgress && count % 5 === 0) {
+      onProgress(count, volunteers.length);
+    }
   }
   return count;
 }

@@ -178,29 +178,54 @@ export const CYCLONE_SIGNALS: CycloneSignalInfo[] = [
 ];
 
 export async function getAllShelters(): Promise<Shelter[]> {
-  const bundled = bundledShelters as Shelter[];
+  const shelterMap = new Map<string, Shelter>();
+  
+  // 1. Bundled dataset
+  if (bundledShelters && Array.isArray(bundledShelters)) {
+    (bundledShelters as Shelter[]).forEach((s) => {
+      shelterMap.set(s.id, s);
+    });
+  }
+
+  // 2. Local cache
   try {
-    // Check localStorage cache first for fast offline loading
     const cachedData = localStorage.getItem(SHELTER_CACHE_KEY);
     if (cachedData) {
       const parsed = JSON.parse(cachedData);
-      if (Array.isArray(parsed) && parsed.length >= bundled.length) {
-        return parsed as Shelter[];
+      if (Array.isArray(parsed)) {
+        parsed.forEach((s: Shelter) => {
+          shelterMap.set(s.id, { ...(shelterMap.get(s.id) || {}), ...s } as Shelter);
+        });
       }
     }
   } catch (e) {
     console.warn('Could not read cached shelters from localStorage:', e);
   }
 
-  // Fallback to bundled dataset and update storage
+  // 3. Firestore live sync (if online)
   try {
-    localStorage.setItem(SHELTER_CACHE_KEY, JSON.stringify(bundled));
-    localStorage.setItem(SHELTER_CACHE_TIMESTAMP_KEY, new Date().toISOString());
-  } catch (e) {
-    // quota exceeded or private mode, silent fallback
+    if (navigator.onLine) {
+      const { getSheltersFromFirestore } = await import('../lib/firebase');
+      const remote = await getSheltersFromFirestore();
+      if (remote && remote.length > 0) {
+        remote.forEach((s) => {
+          shelterMap.set(s.id, { ...(shelterMap.get(s.id) || {}), ...s } as Shelter);
+        });
+      }
+    }
+  } catch (fErr) {
+    console.warn('Firestore shelters fetch skipped:', fErr);
   }
 
-  return bundled;
+  const result = Array.from(shelterMap.values());
+  try {
+    localStorage.setItem(SHELTER_CACHE_KEY, JSON.stringify(result));
+    localStorage.setItem(SHELTER_CACHE_TIMESTAMP_KEY, new Date().toISOString());
+  } catch (e) {
+    // quota exceeded fallback
+  }
+
+  return result;
 }
 
 export function filterShelters(shelters: Shelter[], filters: ShelterFilterOptions): Shelter[] {

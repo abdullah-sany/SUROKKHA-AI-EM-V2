@@ -35,6 +35,30 @@
         "totalBeds": { "type": "number", "description": "Approved or available bed count" }
       }
     },
+    "shelters": {
+      "title": "Cyclone and Flood Shelters",
+      "description": "Directory of cyclone, flood, and multipurpose emergency disaster shelters in Bangladesh",
+      "fields": {
+        "id": { "type": "string", "description": "Unique identifier" },
+        "name": { "type": "string", "description": "Shelter name in English" },
+        "nameBn": { "type": "string", "description": "Shelter name in Bengali" },
+        "type": { "type": "string", "description": "cyclone, flood, multipurpose, or school_cum_shelter" },
+        "division": { "type": "string", "description": "Administrative division" },
+        "district": { "type": "string", "description": "District name" },
+        "upazila": { "type": "string", "description": "Upazila name" },
+        "unionArea": { "type": "string", "description": "Union or specific location" },
+        "capacityPeople": { "type": "number", "description": "Human capacity" },
+        "capacityLivestock": { "type": "number", "description": "Livestock capacity" },
+        "floors": { "type": "number", "description": "Number of stories" },
+        "facilities": { "type": "array", "description": "List of available features" },
+        "contactPerson": { "type": "string", "description": "Manager or local focal point" },
+        "contactPhone": { "type": "string", "description": "Emergency telephone" },
+        "latitude": { "type": "number", "description": "GPS Latitude" },
+        "longitude": { "type": "number", "description": "GPS Longitude" },
+        "verified": { "type": "boolean", "description": "Verification status" },
+        "status": { "type": "string", "description": "operational, maintenance, or congested" }
+      }
+    },
     "volunteers": {
       "title": "Volunteer and Rescue Squads",
       "description": "Directory of emergency rescue teams, Red Crescent, Fire Service volunteers, Gausia Committee and youth rescue units",

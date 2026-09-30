@@ -50,38 +50,47 @@ export default function AmbulanceDirectory() {
   const fetchAmbulances = async () => {
     setLoading(true);
     try {
-      let results: Ambulance[] = [];
+      const ambulanceMap = new Map<string, Ambulance>();
 
-      // 1. Attempt reading from Cloud Firestore first
+      // 1. Load base bundled ambulances
+      if (bundledAmbulances && Array.isArray(bundledAmbulances)) {
+        (bundledAmbulances as Ambulance[]).forEach((a) => {
+          const key = a.id || `${a.providerName}_${a.phone}`;
+          ambulanceMap.set(key, a);
+        });
+      }
+
+      // 2. Overlay Server API
+      try {
+        const url = new URL('/api/ambulances', window.location.origin);
+        const res = await fetch(url.toString());
+        if (res.ok) {
+          const apiData: Ambulance[] = await res.json();
+          if (Array.isArray(apiData)) {
+            apiData.forEach((a) => {
+              const key = a.id || `${a.providerName}_${a.phone}`;
+              ambulanceMap.set(key, { ...ambulanceMap.get(key), ...a });
+            });
+          }
+        }
+      } catch (apiErr) {
+        console.warn('Server API ambulance fetch failed:', apiErr);
+      }
+
+      // 3. Overlay Firestore documents
       try {
         const firestoreData = await getAmbulancesFromFirestore();
         if (firestoreData && firestoreData.length > 0) {
-          results = firestoreData;
+          firestoreData.forEach((a) => {
+            const key = a.id || `${a.providerName}_${a.phone}`;
+            ambulanceMap.set(key, { ...(ambulanceMap.get(key) || {}), ...a } as Ambulance);
+          });
         }
       } catch (fErr) {
         console.warn('Firestore ambulance fetch failed:', fErr);
       }
 
-      // 2. Fallback to Server API if not fetched from Firestore
-      if (results.length === 0) {
-        try {
-          const url = new URL('/api/ambulances', window.location.origin);
-          const res = await fetch(url.toString());
-          if (res.ok) {
-            results = await res.json();
-          }
-        } catch (apiErr) {
-          console.warn('Server API ambulance fetch failed:', apiErr);
-        }
-      }
-
-      // 3. Guaranteed Local Offline Fallback if completely offline
-      if (results.length === 0 && bundledAmbulances && (bundledAmbulances as any[]).length > 0) {
-        results = bundledAmbulances as Ambulance[];
-      }
-
-      // Apply Client-Side Filter for precision & instant responsiveness
-      let filtered = results;
+      let filtered: Ambulance[] = Array.from(ambulanceMap.values());
 
       if (searchQuery.trim()) {
         const s = searchQuery.toLowerCase().trim();
